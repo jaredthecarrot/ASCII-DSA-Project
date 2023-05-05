@@ -11,7 +11,7 @@ class Stack{
     int count;
     E elements[SIZE];
     Stack();
-    E push(E& element);
+    E push(const E& element);
     E pop();
     E top();
     bool isEmpty();
@@ -31,10 +31,10 @@ template <typename E>
 int Stack<E>::size(){return count;}
 
 template <typename E>
-E Stack<E>::push(E& element){
+E Stack<E>::push(const E& element){
     if (t == SIZE - 1){
         cout << "Stack is full" << endl;
-        return NULL;
+        return -1;
     }
     elements[++t] = element;
     count++;
@@ -45,7 +45,7 @@ template <typename E>
 E Stack<E>::pop(){
     if (t == -1){
         cout << "Stack is empty" << endl;
-        return NULL;
+        return -1;
     }
     E element = elements[t--];
     count--;
@@ -56,7 +56,7 @@ template <typename E>
 E Stack<E>::top(){
     if (t == -1){
         cout << "Stack is empty" << endl;
-        return NULL;
+        return -1;
     }
     return elements[t];
 }
@@ -93,7 +93,7 @@ template <typename E>
 E Queue<E>::enqueue(E& element){
     if (count == SIZE){
         cout << "Queue is full" << endl;
-        return NULL;
+        return 0;
     }
     elements[r] = element;
     r = (r + 1) % SIZE;
@@ -105,7 +105,7 @@ template <typename E>
 E Queue<E>::dequeue(){
     if (count == 0){
         cout << "Queue is empty" << endl;
-        return NULL;
+        return 0;
     }
     E element = elements[f];
     f = (f + 1) % SIZE;
@@ -141,7 +141,7 @@ template <typename E>
 E Dictionary<E>::put(E& element){
     if (count == SIZE){
         cout << "Dictionary is full" << endl;
-        return NULL;
+        return 0;
     }
     elements[count++] = element;
     return element;
@@ -154,7 +154,7 @@ E Dictionary<E>::find(E& element){
             return elements[i];
         }
     }
-    return NULL;
+    return 0;
 }
 
 template <typename E>
@@ -167,7 +167,7 @@ E Dictionary<E>::remove(E& element){
             return temp;
         }
     }
-    return NULL;
+    return 0;
 }
 
 template <typename E>
@@ -176,8 +176,8 @@ class Graph{
     int count = 0;
     E elements[SIZE];
     Graph();
-    E addVertex(E& element);
-    E addEdge(E& element1, E& element2);
+    E addVertex(const E& element);
+    E addEdge(const E& element1, const E& element2);
     E removeVertex(E& element);
     E removeEdge(E& element1, E& element2);
 };
@@ -188,20 +188,20 @@ Graph<E>::Graph(){
 }
 
 template <typename E>
-E Graph<E>::addVertex(E& element){
+E Graph<E>::addVertex(const E& element){
     if (count == SIZE){
         cout << "Graph is full" << endl;
-        return NULL;
+        return -1;
     }
     elements[count++] = element;
     return element;
 }
 
 template <typename E>
-E Graph<E>::addEdge(E& element1, E& element2){
+E Graph<E>::addEdge(const E& element1, const E& element2){
     if (count == 0){
         cout << "Graph is empty" << endl;
-        return NULL;
+        return 0;
     }
     for (int i = 0; i < count; i++){
         if (elements[i] == element1){
@@ -214,14 +214,14 @@ E Graph<E>::addEdge(E& element1, E& element2){
             }
         }
     }
-    return NULL;
+    return 0;
 }
 
 template <typename E>
 E Graph<E>::removeVertex(E& element){
     if (count == 0){
         cout << "Graph is empty" << endl;
-        return NULL;
+        return 0;
     }
     for (int i = 0; i < count; i++){
         if (elements[i] == element){
@@ -231,14 +231,14 @@ E Graph<E>::removeVertex(E& element){
             return temp;
         }
     }
-    return NULL;
+    return 0;
 }
 
 template <typename E>
 E Graph<E>::removeEdge(E& element1, E& element2){
     if (count == 0){
         cout << "Graph is empty" << endl;
-        return NULL;
+        return 0;
     }
     for (int i = 0; i < count; i++){
         if (elements[i] == element1){
@@ -251,7 +251,7 @@ E Graph<E>::removeEdge(E& element1, E& element2){
             }
         }
     }
-    return NULL;
+    return 0;
 }
 
 #endif
