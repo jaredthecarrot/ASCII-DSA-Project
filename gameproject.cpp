@@ -25,7 +25,7 @@ int main()
     cout << "Welcome to the Dungeon!\n"
          << "You are a group of adventurers trying to find the treasure that lies within.\n"
          << "You must work together to defeat the monsters that guard the treasure.\n"
-         << "There are 4 total levels to the dungeon.\n\n"
+         << "There are 3 total levels to the dungeon.\n\n"
          << "How many players are there?\n"
          << "Choose 2 to 4 players.\n";
 
@@ -155,9 +155,7 @@ int main()
         }
 
         cout << "Choose a starting spell:\n"
-             <<
-
-            "(1) Fireball\n"
+            << "(1) Fireball\n"
              << "(2) Icebolt\n"
              << "(3) Lightning\n"
              << "(4) Heal\n";
@@ -200,211 +198,226 @@ int main()
         }
     }
 
+    // print inventory for each player
     for (int i = 0; i < playerCount; i++)
     {
-        cout << "Player " << i + 1 << " Inventory:\n";
+        cout << "Player " << i + 1 << " inventory:\n";
         inventory[i].printItems();
-    } // print inventory for each player
-    GameObject enemies_1[playerCount * 2];
-    GameObject enemies_2[playerCount * 3];
-    GameObject enemies_3[playerCount * 4];
-    int remainingPlayers = playerCount;
-
-    // focus on level 1 for now
+    }
+    
     for (int i = 0; i < playerCount; i++)
     {
-        q1.enqueue(players[i]);
-        for (int i = 0; i < playerCount * 2; i++)
-            enemies_1[i].setHealth(30);
-        enemies_1[i].setMelee(10);
-        enemies_1[i].setMagic(5);
-        enemies_1[i].setDefense(10);
-        q2.enqueue(enemies_1[i]);
-    }
+        GameObject enemies_1[playerCount * 2];
+        GameObject enemies_2[playerCount * 3];
+        GameObject enemies_3[playerCount * 4];
+        int remainingPlayers = playerCount;
 
-    int currentPlayerIndex = 0;
-
-    while (true)
-    {
-        GameObject currentPlayer = players[currentPlayerIndex];
-        GameObject enemy = q2.dequeue();
-        cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
-        currentPlayer.combat(currentPlayer, enemy);
-        if (currentPlayer.getHealth() <= 0)
+        for (int i = 0; i < playerCount; i++)
         {
-            cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
-            remainingPlayers--;
-            if (remainingPlayers == 0)
+            q1.enqueue(players[i]);
+            for (int i = 0; i < playerCount * 2; i++)
+                enemies_1[i].setHealth(30);
+            enemies_1[i].setMelee(10);
+            enemies_1[i].setMagic(5);
+            enemies_1[i].setDefense(10);
+            q2.enqueue(enemies_1[i]);
+        }
+
+        int currentPlayerIndex = 0;
+
+        cout << "You are now descending to the first level.\n"
+             << "Room layout looks like:\n\n";
+        rooms.DFS(1);
+        cout << '\n' << '\n';
+
+        while (true)
+        {
+            GameObject currentPlayer = players[currentPlayerIndex];
+            GameObject enemy = q2.dequeue();
+            cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
+            currentPlayer.combat(currentPlayer, enemy);
+            if (currentPlayer.getHealth() <= 0)
+            {
+                cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
+                remainingPlayers--;
+                if (remainingPlayers == 0)
+                {
+                    cout << "All players have died.\n"
+                         << "Game over.\n";
+                    return 0;
+                }
+            }
+            else
+            {
+                q1.enqueue(currentPlayer);
+            }
+
+            if (enemy.getHealth() <= 0)
+            {
+                cout << "Enemy has died.\n";
+            }
+            else
+            {
+                enemy.enemyAttack(currentPlayer);
+                q2.enqueue(enemy);
+            }
+
+            if (q1.isEmpty())
             {
                 cout << "All players have died.\n"
                      << "Game over.\n";
                 return 0;
             }
-        }
-        else
-        {
-            q1.enqueue(currentPlayer);
-        }
 
-        if (enemy.getHealth() <= 0)
-        {
-            cout << "Enemy has died.\n";
-        }
-        else
-        {
-            enemy.enemyAttack(currentPlayer);
-            q2.enqueue(enemy);
+            if (q2.isEmpty())
+            {
+                cout << "All enemies have died.\n"
+                     << "Level 1 complete.\n";
+                break;
+            }
+
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
 
-        if (q1.isEmpty())
+        cout << "You are now descending to the second level.\n"
+             << "Beware! The enemies are stronger.\n"
+             << "Room layout looks like:\n\n";
+        rooms.DFS(2);
+        cout << '\n' << '\n';
+        s.pop();
+        Queue<GameObject> q1_2, q2_2;
+
+        for (int i = 0; i < playerCount; i++)
         {
-            cout << "All players have died.\n"
-                 << "Game over.\n";
-            return 0;
+            q1_2.enqueue(players[i]);
+            for (int i = 0; i < playerCount * 3; i++)
+                enemies_2[i].setHealth(70);
+            enemies_2[i].setMelee(20);
+            enemies_2[i].setMagic(15);
+            enemies_2[i].setDefense(15);
+            q2_2.enqueue(enemies_2[i]);
         }
 
-        if (q2.isEmpty())
+        currentPlayerIndex = 0;
+
+        while (true)
         {
-            cout << "All enemies have died.\n"
-                 << "Level 1 complete.\n";
-            break;
-        }
+            GameObject currentPlayer = players[currentPlayerIndex];
+            GameObject enemy = q2_2.dequeue();
+            cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
+            currentPlayer.combat(currentPlayer, enemy);
+            if (currentPlayer.getHealth() <= 0)
+            {
+                cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
+                remainingPlayers--;
+                if (remainingPlayers == 0)
+                {
+                    cout << "All players have died.\n"
+                         << "Game over.\n";
+                    return 0;
+                }
+            }
+            else
+            {
+                q1_2.enqueue(currentPlayer);
+            }
 
-        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-    }
+            if (enemy.getHealth() <= 0)
+            {
+                cout << "Enemy has died.\n";
+            }
+            else
+            {
+                enemy.enemyAttack(currentPlayer);
+                q2_2.enqueue(enemy);
+            }
 
-    cout << "You are now descending to the second level.\n" <<
-    "Beware! The enemies are stronger.\n";
-
-    Queue<GameObject> q1_2, q2_2;
-
-    for (int i = 0; i < playerCount; i++)
-    {   
-        q1_2.enqueue(players[i]);
-        for (int i = 0; i < playerCount * 3; i++)
-            enemies_2[i].setHealth(70);
-        enemies_2[i].setMelee(20);
-        enemies_2[i].setMagic(15);
-        enemies_2[i].setDefense(15);
-        q2_2.enqueue(enemies_2[i]);
-    }
-
-    currentPlayerIndex = 0;
-
-    while (true)
-    {
-        GameObject currentPlayer = players[currentPlayerIndex];
-        GameObject enemy = q2_2.dequeue();
-        cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
-        currentPlayer.combat(currentPlayer, enemy);
-        if (currentPlayer.getHealth() <= 0)
-        {
-            cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
-            remainingPlayers--;
-            if (remainingPlayers == 0)
+            if (q1_2.isEmpty())
             {
                 cout << "All players have died.\n"
                      << "Game over.\n";
                 return 0;
             }
-        }
-        else
-        {
-            q1_2.enqueue(currentPlayer);
-        }
 
-        if (enemy.getHealth() <= 0)
-        {
-            cout << "Enemy has died.\n";
-        }
-        else
-        {
-            enemy.enemyAttack(currentPlayer);
-            q2_2.enqueue(enemy);
+            if (q2_2.isEmpty())
+            {
+                cout << "All enemies have died.\n"
+                     << "Level 2 complete.\n";
+                break;
+            }
+
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
 
-        if (q1_2.isEmpty())
+        cout << "You are now descending to the third level.\n"
+             << "Beware! Enemies are just as strong, but significantly more!\n"
+             << "Health has been granted.\n"
+             << "Room layout looks like:\n\n";
+        rooms.DFS(3);
+        cout << '\n' << '\n';
+        s.pop();
+        Queue<GameObject> q1_3, q2_3;
+
+        for (int i = 0; i < playerCount; i++)
         {
-            cout << "All players have died.\n"
-                 << "Game over.\n";
-            return 0;
+            players[i].setHealth(150);
+            q1_3.enqueue(players[i]);
+            for (int i = 0; i < playerCount * 4; i++)
+                enemies_3[i].setHealth(70);
+            enemies_3[i].setMelee(20);
+            enemies_3[i].setMagic(15);
+            enemies_3[i].setDefense(15);
+            q2_3.enqueue(enemies_3[i]);
         }
 
-        if (q2_2.isEmpty())
+        while (true)
         {
-            cout << "All enemies have died.\n"
-                 << "Level 2 complete.\n";
-            break;
-        }
+            GameObject currentPlayer = players[currentPlayerIndex];
+            GameObject enemy = q2_3.dequeue();
+            cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
+            currentPlayer.combat(currentPlayer, enemy);
+            if (currentPlayer.getHealth() <= 0)
+            {
+                cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
+                remainingPlayers--;
+                if (remainingPlayers == 0)
+                {
+                    cout << "All players have died.\n"
+                         << "Game over.\n";
+                    return 0;
+                }
+            }
+            else
+            {
+                q1_3.enqueue(currentPlayer);
+            }
 
-        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-    }
+            if (enemy.getHealth() <= 0)
+            {
+                cout << "Enemy has died.\n";
+            }
+            else
+            {
+                enemy.enemyAttack(currentPlayer);
+                q2_3.enqueue(enemy);
+            }
 
-    cout << "You are now descending to the third level.\n" <<
-    "Beware! Enemies are just as strong, but significantly more!\n" <<
-    "Health has been granted.\n";
-
-    Queue<GameObject> q1_3, q2_3;
-
-    for (int i = 0; i < playerCount; i++)
-    {   
-        players[i].setHealth(150);
-        q1_3.enqueue(players[i]);
-        for (int i = 0; i < playerCount * 4; i++)
-            enemies_3[i].setHealth(70);
-        enemies_3[i].setMelee(20);
-        enemies_3[i].setMagic(15);
-        enemies_3[i].setDefense(15);
-        q2_3.enqueue(enemies_3[i]);
-    }
-
-    while (true)
-    {
-        GameObject currentPlayer = players[currentPlayerIndex];
-        GameObject enemy = q2_3.dequeue();
-        cout << "It is Player " << currentPlayerIndex + 1 << "'s turn.\n";
-        currentPlayer.combat(currentPlayer, enemy);
-        if (currentPlayer.getHealth() <= 0)
-        {
-            cout << "Player " << currentPlayerIndex + 1 << " has died.\n";
-            remainingPlayers--;
-            if (remainingPlayers == 0)
+            if (q1_3.isEmpty())
             {
                 cout << "All players have died.\n"
                      << "Game over.\n";
                 return 0;
             }
-        }
-        else
-        {
-            q1_3.enqueue(currentPlayer);
-        }
 
-        if (enemy.getHealth() <= 0)
-        {
-            cout << "Enemy has died.\n";
-        }
-        else
-        {
-            enemy.enemyAttack(currentPlayer);
-            q2_3.enqueue(enemy);
-        }
+            if (q2_3.isEmpty())
+            {
+                cout << "All enemies have died.\n"
+                     << "Level 2 complete.\n";
+                break;
+            }
 
-        if (q1_3.isEmpty())
-        {
-            cout << "All players have died.\n"
-                 << "Game over.\n";
-            return 0;
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
-
-        if (q2_3.isEmpty())
-        {
-            cout << "All enemies have died.\n"
-                 << "Level 2 complete.\n";
-            break;
-        }
-
-        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        return 0;
     }
-    return 0;
 }

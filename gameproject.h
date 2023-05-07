@@ -78,7 +78,6 @@ void GameObject::combat(GameObject attacker, GameObject &defender)
     {
         damage = attacker.getMagic() - defender.getDefense();
     }
-
     if (damage < 0)
     {
         damage = 0;

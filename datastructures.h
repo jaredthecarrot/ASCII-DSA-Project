@@ -2,6 +2,7 @@
 #define datastructures_h
 #define SIZE 50
 #include <iostream>
+#include <vector>
 using std::cout, std::endl, std::cin;
 
 template <typename E>
@@ -78,7 +79,7 @@ public:
     int count;
     E elements[SIZE];
     Queue();
-    E enqueue(E &element);
+    E enqueue(const E &element);
     E dequeue();
     E front();
     bool isEmpty();
@@ -100,7 +101,7 @@ template <typename E>
 int Queue<E>::size() { return count; }
 
 template <typename E>
-E Queue<E>::enqueue(E &element)
+E Queue<E>::enqueue(const E &element)
 {
     if (count == SIZE)
     {
@@ -201,6 +202,8 @@ public:
     int count = 0;
     E elements[SIZE];
     Graph();
+    void DFS(const E &element);
+    void DFSHelper(int index, bool visited[]);
     E addVertex(const E &element);
     E addEdge(const E &element1, const E &element2);
     E removeVertex(E &element);
@@ -211,6 +214,46 @@ template <typename E>
 Graph<E>::Graph()
 {
     count = 0;
+}
+
+template <typename E>
+void Graph<E>::DFS(const E &element)
+{
+    bool visited[count];
+    for (int i = 0; i < count; i++)
+    {
+        visited[i] = false;
+    }
+    int startIndex = -1;
+    for (int i = 0; i < count; i++)
+    {
+        if (elements[i] == element)
+        {
+            startIndex = i;
+            break;
+        }
+    }
+
+    if (startIndex == -1)
+    {
+        cout << "Element not found in the graph." << endl;
+        return;
+    }
+    DFSHelper(startIndex, visited);
+}
+
+template <typename E>
+void Graph<E>::DFSHelper(int index, bool visited[])
+{
+    visited[index] = true;
+    cout << elements[index] << " ";
+    for (int i = 0; i < count; i++)
+    {
+        if (!visited[i])
+        {
+            DFSHelper(i, visited);
+        }
+    }
 }
 
 template <typename E>
