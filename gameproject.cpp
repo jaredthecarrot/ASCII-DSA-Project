@@ -7,14 +7,11 @@ using std::string, std::cout, std::cin;
 
 int main()
 {
-
-    // i want to create a graph of rooms
-
     Graph<int> rooms;
     Stack<int> s;
-    Queue<GameObject> q1, q2;
+    Queue<GameObject> q1, q2; // q1 for players, q2 for enemies
 
-    s.push(rooms.addVertex(3));
+    s.push(rooms.addVertex(3)); // pushes rooms 1, 2, 3 to stack
 
     s.push(rooms.addVertex(2));
 
@@ -39,7 +36,7 @@ int main()
     }
 
     GameObject players[playerCount];
-    Inventory inventory[playerCount];
+    Inventory inventory[playerCount]; //  Dictionary ADT for inventory
 
     for (int i = 0; i < playerCount; i++)
     {
@@ -155,7 +152,7 @@ int main()
         }
 
         cout << "Choose a starting spell:\n"
-            << "(1) Fireball\n"
+             << "(1) Fireball\n"
              << "(2) Icebolt\n"
              << "(3) Lightning\n"
              << "(4) Heal\n";
@@ -198,13 +195,12 @@ int main()
         }
     }
 
-    // print inventory for each player
     for (int i = 0; i < playerCount; i++)
     {
         cout << "Player " << i + 1 << " inventory:\n";
-        inventory[i].printItems();
+        inventory[i].printItems(); // Prints inventory
     }
-    
+
     for (int i = 0; i < playerCount; i++)
     {
         GameObject enemies_1[playerCount * 2];
@@ -228,7 +224,8 @@ int main()
         cout << "You are now descending to the first level.\n"
              << "Room layout looks like:\n\n";
         rooms.DFS(1);
-        cout << '\n' << '\n';
+        cout << '\n'
+             << '\n';
 
         while (true)
         {
@@ -283,9 +280,10 @@ int main()
              << "Beware! The enemies are stronger.\n"
              << "Room layout looks like:\n\n";
         rooms.DFS(2);
-        cout << '\n' << '\n';
-        s.pop();
-        Queue<GameObject> q1_2, q2_2;
+        cout << '\n'
+             << '\n';
+        s.pop();                      // Pops the 1st room
+        Queue<GameObject> q1_2, q2_2; // q1 for players, q2 for enemies, 2nd level
 
         for (int i = 0; i < playerCount; i++)
         {
@@ -354,9 +352,10 @@ int main()
              << "Health has been granted.\n"
              << "Room layout looks like:\n\n";
         rooms.DFS(3);
-        cout << '\n' << '\n';
-        s.pop();
-        Queue<GameObject> q1_3, q2_3;
+        cout << '\n'
+             << '\n';
+        s.pop();                      // Pop the 2nd room
+        Queue<GameObject> q1_3, q2_3; // q1 for players, q2 for enemies, 3rd level
 
         for (int i = 0; i < playerCount; i++)
         {
@@ -412,12 +411,21 @@ int main()
             if (q2_3.isEmpty())
             {
                 cout << "All enemies have died.\n"
-                     << "Level 2 complete.\n";
+                     << "Level 3 complete.\n";
                 break;
             }
 
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
+        s.pop(); // Pop the 3rd room
+
+        if (s.isEmpty())
+        {
+            cout << "You have completed the dungeon!\n"
+                 << "Congratulations!\n";
+            return 0;
+        }
         return 0;
     }
+    return 0;
 }
